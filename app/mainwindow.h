@@ -142,6 +142,7 @@ class MainWindow : public QMainWindow
         void firstRunDialogFinished();
         void firstRunDialogOk();
 
+	void prevFocusWidgetDestroyed();
 
     private:
         void setupActions();
@@ -205,6 +206,11 @@ class MainWindow : public QMainWindow
         void initWayland();
         KWayland::Client::PlasmaShell *m_plasmaShell;
 #endif
+
+        // Previously-focused widget.
+        // Workaround for a terminal focus issue when toggling
+        // window state using the hotkey when compositing is enabled.
+        QWidget *m_prevFocusWidget;
 };
 
 #endif
