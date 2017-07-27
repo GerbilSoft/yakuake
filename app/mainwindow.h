@@ -27,6 +27,7 @@
 
 #include <QMainWindow>
 
+#include <QPointer>
 #include <QTimer>
 
 
@@ -142,8 +143,6 @@ class MainWindow : public QMainWindow
         void firstRunDialogFinished();
         void firstRunDialogOk();
 
-        void prevFocusWidgetDestroyed();
-
     private:
         void setupActions();
 
@@ -210,7 +209,7 @@ class MainWindow : public QMainWindow
         // Previously-focused widget.
         // Workaround for a terminal focus issue when toggling
         // window state using the hotkey when compositing is enabled.
-        QWidget *m_prevFocusWidget;
+        QPointer<QWidget> m_previouslyFocusedWidget;
 };
 
 #endif

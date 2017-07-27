@@ -100,11 +100,6 @@ MainWindow::MainWindow(QWidget* parent)
 
     m_toggleLock = false;
 
-    // Previously-focused widget.
-    // Workaround for a terminal focus issue when toggling
-    // window state using the hotkey when compositing is enabled.
-    m_prevFocusWidget = Q_NULLPTR;
-
     setupActions();
     setupMenu();
 
@@ -1065,14 +1060,8 @@ void MainWindow::toggleWindowState()
 {
     bool visible = isVisible();
     if (visible) {
-        if (m_prevFocusWidget) {
-            // Reset the previously-focused widget if it was set before.
-            disconnect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
-        }
-        m_prevFocusWidget = this->focusWidget();
-        if (m_prevFocusWidget) {
-            connect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
-        }
+        // Save the currently-focused widget for later.
+        m_previouslyFocusedWidget = this->focusWidget();
     }
 
     if (visible && KWindowSystem::activeWindow() != winId() && Settings::keepOpen())
@@ -1146,11 +1135,10 @@ void MainWindow::toggleWindowState()
         }
     }
 
-    if (!visible && m_prevFocusWidget) {
+    if (!visible && m_previouslyFocusedWidget) {
         // Reset the widget focus.
-        m_prevFocusWidget->setFocus();
-        disconnect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
-        m_prevFocusWidget = Q_NULLPTR;
+        m_previouslyFocusedWidget->setFocus();
+        m_previouslyFocusedWidget.clear();
     }
 }
 
@@ -1525,9 +1513,4 @@ void MainWindow::firstRunDialogOk()
 void MainWindow::updateUseTranslucency()
 {
     m_useTranslucency = (Settings::translucency() && KWindowSystem::compositingActive());
-}
-
-void MainWindow::prevFocusWidgetDestroyed()
-{
-    m_prevFocusWidget = Q_NULLPTR;
 }
