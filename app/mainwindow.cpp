@@ -1105,16 +1105,13 @@ bool MainWindow::event(QEvent* event)
 void MainWindow::toggleWindowState()
 {
     bool visible = isVisible();
-    if (visible)
-    {
-        if (m_prevFocusWidget)
-        {
+    if (visible) {
+        if (m_prevFocusWidget) {
             // Reset the previously-focused widget if it was set before.
             disconnect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
         }
         m_prevFocusWidget = this->focusWidget();
-        if (m_prevFocusWidget)
-        {
+        if (m_prevFocusWidget) {
             connect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
         }
     }
@@ -1190,8 +1187,7 @@ void MainWindow::toggleWindowState()
         }
     }
 
-    if (!visible && m_prevFocusWidget)
-    {
+    if (!visible && m_prevFocusWidget) {
         // Reset the widget focus.
         m_prevFocusWidget->setFocus();
         disconnect(m_prevFocusWidget, &QWidget::destroyed, this, &MainWindow::prevFocusWidgetDestroyed);
